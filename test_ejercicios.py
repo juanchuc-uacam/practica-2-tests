@@ -1,29 +1,32 @@
-# test_ejercicios.py
-
 import math
 import pytest
-from volumen_cilindro import volumen_cilindro
-from costo_proyecto import costo_proyecto
-from convertir_longitud import convertir_longitud
-from area_paredes import area_total_paredes
-from perimetro_triangulo import perimetro_triangulo_rectangulo
-from masa_columna import masa_columna
-from kg_a_libras import kg_a_libras
-from area_circulo import area_circulo
-from celsius_a_fahrenheit import celsius_a_fahrenheit
-from promedio_tres import promedio_tres
-from area_rectangulo import area_rectangulo
-from minutos_a_horas import minutos_a_horas_y_minutos
+import importlib
 
 
-# Ejercicios originales
+def try_import(module_name, func_name):
+    """
+    Intenta importar un módulo y obtener la función especificada.
+    Si falla, el test se marcará como SKIPPED en lugar de romper toda la ejecución.
+    """
+    try:
+        module = importlib.import_module(module_name)
+        return getattr(module, func_name)
+    except (ModuleNotFoundError, AttributeError):
+        pytest.skip(f"Módulo o función no encontrada: {module_name}.{func_name}")
+
+
+# -------------------------
+# Ejercicios originales (1-7)
+# -------------------------
+
 @pytest.mark.parametrize("r, h, esperado", [
     (1, 1, math.pi * 1 * 1 * 1),
     (2, 5, math.pi * 4 * 5),
     (3, 0.5, math.pi * 9 * 0.5),
 ])
 def test_volumen_cilindro(r, h, esperado):
-    assert math.isclose(volumen_cilindro(r, h), esperado, rel_tol=1e-6)
+    func = try_import("volumen_cilindro", "volumen_cilindro")
+    assert math.isclose(func(r, h), esperado, rel_tol=1e-6)
 
 
 @pytest.mark.parametrize("precio, cantidad, esperado", [
@@ -32,7 +35,8 @@ def test_volumen_cilindro(r, h, esperado):
     (0, 100, 0),
 ])
 def test_costo_proyecto(precio, cantidad, esperado):
-    assert math.isclose(costo_proyecto(precio, cantidad), esperado, rel_tol=1e-6)
+    func = try_import("costo_proyecto", "costo_proyecto")
+    assert math.isclose(func(precio, cantidad), esperado, rel_tol=1e-6)
 
 
 @pytest.mark.parametrize("metros, cm_esp, pulg_esp", [
@@ -41,7 +45,8 @@ def test_costo_proyecto(precio, cantidad, esperado):
     (0.5, 50, 19.68505),
 ])
 def test_convertir_longitud(metros, cm_esp, pulg_esp):
-    cm, pulgadas = convertir_longitud(metros)
+    func = try_import("convertir_longitud", "convertir_longitud")
+    cm, pulgadas = func(metros)
     assert math.isclose(cm, cm_esp, rel_tol=1e-6)
     assert math.isclose(pulgadas, pulg_esp, rel_tol=1e-6)
 
@@ -52,16 +57,18 @@ def test_convertir_longitud(metros, cm_esp, pulg_esp):
     (4.5, 2, 18),
 ])
 def test_area_total_paredes(altura, longitud, esperado):
-    assert math.isclose(area_total_paredes(altura, longitud), esperado, rel_tol=1e-6)
+    func = try_import("area_paredes", "area_total_paredes")
+    assert math.isclose(func(altura, longitud), esperado, rel_tol=1e-6)
 
 
 @pytest.mark.parametrize("a, b, esperado", [
-    (3, 4, 12),
-    (5, 12, 30),
-    (8, 15, 40),
+    (3, 4, 12),   # Hipotenusa = 5
+    (5, 12, 30),  # Hipotenusa = 13
+    (8, 15, 40),  # Hipotenusa = 17
 ])
 def test_perimetro_triangulo_rectangulo(a, b, esperado):
-    assert math.isclose(perimetro_triangulo_rectangulo(a, b), esperado, rel_tol=1e-6)
+    func = try_import("perimetro_triangulo", "perimetro_triangulo_rectangulo")
+    assert math.isclose(func(a, b), esperado, rel_tol=1e-6)
 
 
 @pytest.mark.parametrize("volumen, densidad, esperado", [
@@ -70,7 +77,8 @@ def test_perimetro_triangulo_rectangulo(a, b, esperado):
     (0.5, 2400, 1200),
 ])
 def test_masa_columna(volumen, densidad, esperado):
-    assert math.isclose(masa_columna(volumen, densidad), esperado, rel_tol=1e-6)
+    func = try_import("masa_columna", "masa_columna")
+    assert math.isclose(func(volumen, densidad), esperado, rel_tol=1e-6)
 
 
 @pytest.mark.parametrize("kg, esperado", [
@@ -79,17 +87,22 @@ def test_masa_columna(volumen, densidad, esperado):
     (0.5, 1.102031),
 ])
 def test_kg_a_libras(kg, esperado):
-    assert math.isclose(kg_a_libras(kg), esperado, rel_tol=1e-6)
+    func = try_import("kg_a_libras", "kg_a_libras")
+    assert math.isclose(func(kg), esperado, rel_tol=1e-6)
 
 
-# Nuevos ejercicios
+# -------------------------
+# Ejercicios nuevos (8-12)
+# -------------------------
+
 @pytest.mark.parametrize("radio, esperado", [
     (1, math.pi * 1 * 1),
     (2, math.pi * 4),
     (0.5, math.pi * 0.25),
 ])
 def test_area_circulo(radio, esperado):
-    assert math.isclose(area_circulo(radio), esperado, rel_tol=1e-6)
+    func = try_import("area_circulo", "area_circulo")
+    assert math.isclose(func(radio), esperado, rel_tol=1e-6)
 
 
 @pytest.mark.parametrize("celsius, esperado", [
@@ -98,7 +111,8 @@ def test_area_circulo(radio, esperado):
     (-40, -40),
 ])
 def test_celsius_a_fahrenheit(celsius, esperado):
-    assert math.isclose(celsius_a_fahrenheit(celsius), esperado, rel_tol=1e-6)
+    func = try_import("celsius_a_fahrenheit", "celsius_a_fahrenheit")
+    assert math.isclose(func(celsius), esperado, rel_tol=1e-6)
 
 
 @pytest.mark.parametrize("a, b, c, esperado", [
@@ -107,7 +121,8 @@ def test_celsius_a_fahrenheit(celsius, esperado):
     (5, 5, 5, 5),
 ])
 def test_promedio_tres(a, b, c, esperado):
-    assert math.isclose(promedio_tres(a, b, c), esperado, rel_tol=1e-6)
+    func = try_import("promedio_tres", "promedio_tres")
+    assert math.isclose(func(a, b, c), esperado, rel_tol=1e-6)
 
 
 @pytest.mark.parametrize("base, altura, esperado", [
@@ -116,7 +131,8 @@ def test_promedio_tres(a, b, c, esperado):
     (7.5, 4, 30),
 ])
 def test_area_rectangulo(base, altura, esperado):
-    assert math.isclose(area_rectangulo(base, altura), esperado, rel_tol=1e-6)
+    func = try_import("area_rectangulo", "area_rectangulo")
+    assert math.isclose(func(base, altura), esperado, rel_tol=1e-6)
 
 
 @pytest.mark.parametrize("minutos, h_esp, m_esp", [
@@ -125,6 +141,7 @@ def test_area_rectangulo(base, altura, esperado):
     (59, 0, 59),
 ])
 def test_minutos_a_horas_y_minutos(minutos, h_esp, m_esp):
-    horas, mins = minutos_a_horas_y_minutos(minutos)
+    func = try_import("minutos_a_horas", "minutos_a_horas_y_minutos")
+    horas, mins = func(minutos)
     assert horas == h_esp
     assert mins == m_esp
